@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:     Easy Digital Downloads - Commission Thresholds
- * Plugin URI:      https://sellcomet.com/downloads/
+ * Plugin URI:      https://sellcomet.com/downloads/commission-thresholds
  * Description:     Disable commissions until a specific sales or earnings threshold has been met.
  * Version:         1.0.0
  * Author:          Sell Comet
@@ -9,7 +9,7 @@
  * Text Domain:     edd-commission-thresholds
  * Domain Path:     languages
  *
- * @package         EDD\CommissionThresholds
+ * @package         EDD\Commission_Thresholds
  * @author          Sell Comet
  * @copyright       Copyright (c) Sell Comet
  */
@@ -82,44 +82,41 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
         private function hooks() {
 
             if ( is_admin() ) {
-              // Handle licensing
-              if( class_exists( 'EDD_License' ) ) {
-                  $license = new EDD_License( __FILE__, 'Commission Thresholds', EDD_COMMISSION_THRESHOLDS_VER, 'Sell Comet' );
-              }
 
-              // Register extension settings
-              add_filter( 'eddc_settings', array( $this, 'settings' ), 1 );
+                // Register extension settings
+                add_filter( 'eddc_settings', array( $this, 'settings' ), 1 );
 
-              // Add verification nonce
-              add_action( 'eddc_metabox_before_options', array( $this, 'add_commissions_meta_box_nonce' ), 10, 1 );
+                // Add verification nonce
+                add_action( 'eddc_metabox_before_options', array( $this, 'add_commissions_meta_box_nonce' ), 10, 1 );
 
-              // Add filterable "Threshold Type" options to Commissions meta box
-              add_action( 'eddc_metabox_options_table_after', array( $this, 'add_commissions_meta_box_threshold_type_options' ), 10, 1 );
+                // Add filterable "Threshold Type" options to Commissions meta box
+                add_action( 'eddc_metabox_options_table_after', array( $this, 'add_commissions_meta_box_threshold_type_options' ), 10, 1 );
 
-              // Add "Thresholds" table header and tooltip
-              add_action( 'eddc_meta_box_table_header_after', array( $this, 'add_commissions_meta_box_threshold_table_header' ), 10, 1 );
+                // Add "Thresholds" table header and tooltip
+                add_action( 'eddc_meta_box_table_header_after', array( $this, 'add_commissions_meta_box_threshold_table_header' ), 10, 1 );
 
-              // Add 'initialization' threshold field/cell for when _edd_commission_settings meta is empty
-              add_action( 'eddc_meta_box_table_cell_remove_before', array( $this, 'add_commissions_meta_box_empty_rates_threshold_field' ), 10, 1 );
+                // Add 'initialization' threshold field/cell for when _edd_commission_settings meta is empty
+                add_action( 'eddc_meta_box_table_cell_remove_before', array( $this, 'add_commissions_meta_box_empty_rates_threshold_field' ), 10, 1 );
 
-              // Add threshold table fields/cells when _edd_commission_threshold_settings meta is not empty
-              add_action( 'eddc_meta_box_table_cell_rates_remove_before', array( $this, 'add_commissions_meta_box_rates_threshold_fields' ), 10, 3 );
+                // Add threshold table fields/cells when _edd_commission_threshold_settings meta is not empty
+                add_action( 'eddc_meta_box_table_cell_rates_remove_before', array( $this, 'add_commissions_meta_box_rates_threshold_fields' ), 10, 3 );
 
-              // Save commission meta box threshold fields (user ids and threshold rates) to _edd_commission_threshold_settings meta
-              add_action( 'save_post', array( $this, 'save_commissions_meta_box_threshold_fields' ), 10, 1 );
+                // Save commission meta box threshold fields (user ids and threshold rates) to _edd_commission_threshold_settings meta
+                add_action( 'save_post', array( $this, 'save_commissions_meta_box_threshold_fields' ), 10, 1 );
 
-              // Add "threshold" rates to original rates array so the table cells can be displayed correctly.
-              add_filter( 'eddc_render_commissions_meta_box_rates_args', array( $this, 'filter_commissions_meta_box_rates_query_args' ), 10, 3 );
+                // Add "threshold" rates to original rates array so the table cells can be displayed correctly.
+                add_filter( 'eddc_render_commissions_meta_box_rates_args', array( $this, 'filter_commissions_meta_box_rates_query_args' ), 10, 3 );
 
-              // Add "User's threshold rate" field to WordPress user profile admin page
-              add_action( 'eddc_user_profile_table_end', array( $this, 'add_user_profile_fields' ), 10, 1 );
+                // Add "User's threshold rate" field to WordPress user profile admin page
+                add_action( 'eddc_user_profile_table_end', array( $this, 'add_user_profile_fields' ), 10, 1 );
 
-              // Santize and save user profile "User's threshold rate" field
-              add_action( 'personal_options_update', array( $this, 'save_user_profile_fields' ), 10, 1 );
-              add_action( 'edit_user_profile_update', array( $this, 'save_user_profile_fields' ), 10, 1 );
+                // Santize and save user profile "User's threshold rate" field
+                add_action( 'personal_options_update', array( $this, 'save_user_profile_fields' ), 10, 1 );
+                add_action( 'edit_user_profile_update', array( $this, 'save_user_profile_fields' ), 10, 1 );
+
             }
 
-            // Get the commission threshold type and rate and check if the threshold is greater than either the earnings (or sales)
+            // Get the commission threshold type (and rate) and check if the threshold is greater than either the earnings (or sales)
             add_filter( 'eddc_should_record_recipient_commissions', array( $this, 'check_commission_threshold' ), 10, 4 );
 
             // Add a payment note if the threshold has not been achieved
@@ -139,46 +136,44 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
          * @return      boolean $record_commission false if threshold not met, true otherwise
          */
         public function check_commission_threshold( $record_commission = true, $recipient, $download_id, $payment_id ) {
-          // If we were passed a numeric value as the payment id (which it should be)
-          if ( ! is_object( $payment_id ) && is_numeric( $payment_id ) ) {
-            $payment = new EDD_Payment( $payment_id );
-          } elseif( is_a( $payment_id, 'EDD_Payment' ) ) {
-            $payment = $payment_id;
-          } else {
-            return false;
-          }
+            // If we were passed a numeric value as the payment id (which it should be)
+            if ( ! is_object( $payment_id ) && is_numeric( $payment_id ) ) {
+                $payment = new EDD_Payment( $payment_id );
+            } elseif( is_a( $payment_id, 'EDD_Payment' ) ) {
+                $payment = $payment_id;
+            } else {
+                return false;
+            }
 
-          $commission_settings = get_post_meta( $download_id, '_edd_commission_threshold_settings', true );
+            do_action( 'edd_commission_thresholds_check_threshold_before', $record_commission, $recipient, $download_id, $payment_id, $payment );
 
-          if ( empty( $commission_settings ) ) {
-            $record_commission = true;
-          }
+            $commission_settings = get_post_meta( $download_id, '_edd_commission_threshold_settings', true );
 
-          // Get download earnings stats
-          $earnings = (float) edd_get_download_earnings_stats( $download_id );
+            if ( empty( $commission_settings ) ) {
+                $record_commission = true;
+            }
 
-          // Get download sales stats
-          $sales = (int) edd_get_download_sales_stats( $download_id );
+            // Get download earnings stats
+            $earnings = (float) edd_get_download_earnings_stats( $download_id );
 
-          // Get commission threshold type
-          $type = $this->get_commission_threshold_type( $download_id );
+            // Get download sales stats
+            $sales = (int) edd_get_download_sales_stats( $download_id );
 
-          // Get commission recipient threshold rate
-          $threshold = $this->get_recipient_threshold_rate( $download_id, (int) $recipient );
+            // Get commission threshold type
+            $type = $this->get_commission_threshold_type( $download_id );
 
-          switch ( $type ) {
-      		case 'earnings':
-              $record_commission = ( $earnings < $threshold ) ? false : true;
-              break;
-      		case 'sales':
-      		default:
-              $record_commission = ( $sales < $threshold ) ? false : true;
-              break;
-      	   }
+            // Get commission recipient threshold rate
+            $threshold = $this->get_recipient_threshold_rate( $download_id, (int) $recipient );
 
-          do_action( 'edd_commission_thresholds_check_threshold_after', $record_commission, $recipient, $download_id, $payment_id, $payment, $type );
+            if ( 'earnings' === $type ) {
+                $record_commission = ( $earnings < $threshold ) ? false : true;
+            } else {
+                $record_commission = ( $sales < $threshold ) ? false : true;
+            }
 
-          return apply_filters( 'edd_commission_thresholds_check_threshold', $record_commission, $recipient, $download_id, $payment_id, $payment, $type );
+            do_action( 'edd_commission_thresholds_check_threshold_after', $record_commission, $recipient, $download_id, $payment_id, $payment, $type );
+
+            return apply_filters( 'edd_commission_thresholds_check_threshold', $record_commission, $recipient, $download_id, $payment_id, $payment, $type );
         }
 
 
@@ -196,10 +191,10 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
          * @return      void
          */
         public function maybe_add_payment_note( $record_commission, $recipient, $download_id, $payment_id, $payment, $type ) {
-          if ( false === $record_commission ) {
-            $download = new EDD_Download( $download_id );
-            $payment->add_note( sprintf( __( 'Commission for %s skipped because %s did not reach threshold.', 'edd-commission-thresholds' ), $download->get_name(), get_userdata( $recipient )->display_name ) );
-          }
+            if ( false === $record_commission ) {
+                $download = new EDD_Download( $download_id );
+                $payment->add_note( sprintf( __( 'Commission for %s skipped because %s did not reach threshold.', 'edd-commission-thresholds' ), $download->get_name(), get_userdata( $recipient )->display_name ) );
+            }
         }
 
 
@@ -212,9 +207,9 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
          * @return      void
          */
         public function add_commissions_meta_box_nonce( $post_id ) {
-          ?>
-          <input type="hidden" name="edd_download_commission_meta_box_thresholds_nonce" value="<?php echo wp_create_nonce( basename( __FILE__ ) ); ?>" />
-          <?php
+            ?>
+            <input type="hidden" name="edd_download_commission_meta_box_thresholds_nonce" value="<?php echo wp_create_nonce( basename( __FILE__ ) ); ?>" />
+            <?php
         }
 
 
@@ -227,14 +222,14 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
          * @return      void
          */
         public function filter_commissions_meta_box_rates_query_args( $rates, $users, $i ) {
-          global $post;
+            global $post;
 
-          $meta       = get_post_meta( $post->ID, '_edd_commission_threshold_settings', true );
-          $thresholds = isset( $meta['threshold'] ) ? $meta['threshold'] : '';
-          $thresholds = ! empty( $thresholds ) ? array_map( 'trim', explode( ',', $thresholds ) ) : array();
-          $rates['threshold'] = array_key_exists( $i, $thresholds ) ? $thresholds[ $i ] : '';
+            $meta       = get_post_meta( $post->ID, '_edd_commission_threshold_settings', true );
+            $thresholds = isset( $meta['threshold'] ) ? $meta['threshold'] : '';
+            $thresholds = ! empty( $thresholds ) ? array_map( 'trim', explode( ',', $thresholds ) ) : array();
+            $rates['threshold'] = array_key_exists( $i, $thresholds ) ? $thresholds[ $i ] : '';
 
-          return $rates;
+            return $rates;
         }
 
 
@@ -247,38 +242,38 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
          * @return      void
          */
         public function add_commissions_meta_box_threshold_type_options( $post_id ) {
-          $enabled = get_post_meta( $post_id, '_edd_commisions_enabled', true ) ? true : false;
-          $meta    = get_post_meta( $post_id, '_edd_commission_threshold_settings', true );
-          $type    = isset( $meta['type'] ) ? $meta['type'] : 'earnings';
-          $display = $enabled ? '' : ' style="display:none";';
+            $enabled = get_post_meta( $post_id, '_edd_commisions_enabled', true ) ? true : false;
+            $meta    = get_post_meta( $post_id, '_edd_commission_threshold_settings', true );
+            $type    = isset( $meta['type'] ) ? $meta['type'] : 'earnings';
+            $display = $enabled ? '' : ' style="display:none";';
 
-        ?>
-          <tr <?php echo $display; ?> class="eddc_toggled_row" id="edd_commission_thresholds_type_wrapper">
-      			<td class="edd_field_type_select">
-      				<label for="edd_commission_threshold_settings[type]"><strong><?php _e( 'Threshold Type:', 'edd-commission-thresholds' ); ?></strong></label>
-      				<span alt="f223" class="edd-help-tip dashicons dashicons-editor-help" title="<strong><?php _e( 'Type', 'edd-commission-thresholds' ); ?></strong>: <?php _e( 'With commissions enabled, you will need to specify who to assign commission thresholds to. Commission thresholds can ether total earnings or sales count based.', 'edd-commission-thresholds' ); ?>"></span><br/>
-      				<p><?php
+            ?>
+              <tr <?php echo $display; ?> class="eddc_toggled_row" id="edd_commission_thresholds_type_wrapper">
+          			<td class="edd_field_type_select">
+          				<label for="edd_commission_threshold_settings[type]"><strong><?php _e( 'Threshold Type:', 'edd-commission-thresholds' ); ?></strong></label>
+          				<span alt="f223" class="edd-help-tip dashicons dashicons-editor-help" title="<strong><?php _e( 'Type', 'edd-commission-thresholds' ); ?></strong>: <?php _e( 'With commissions enabled, you will need to specify who to assign commission thresholds to. Commission thresholds can ether total earnings or sales count based.', 'edd-commission-thresholds' ); ?>"></span><br/>
+          				<p><?php
 
-      				// Filter in the types of commission thresholds there could be.
-      				$commission_types = apply_filters( 'edd_commission_threshold_types', array(
-      					'earnings'    => __( 'Earnings', 'edd-commission-thresholds' ),
-      					'sales'       => __( 'Sales', 'edd-commission-thresholds' ),
-      				) );
+          				// Filter in the types of commission thresholds there could be.
+          				$commission_types = apply_filters( 'edd_commission_threshold_types', array(
+          					'earnings'    => __( 'Earnings', 'edd-commission-thresholds' ),
+          					'sales'       => __( 'Sales', 'edd-commission-thresholds' ),
+          				) );
 
-      				foreach ( $commission_types as $commission_type => $commission_pretty_string ) {
-      					?>
-      					<span class="edd-commission-type-wrapper" id="edd_commission_threshold_type_<?php echo $commission_type; ?>_wrapper">
-      						<input id="edd_commission_threshold_type_<?php echo $commission_type; ?>" type="radio" name="edd_commission_threshold_settings[type]" value="<?php echo $commission_type; ?>" <?php checked( $type, $commission_type, true ); ?>/>
-      						<label for="edd_commission_threshold_type_<?php echo $commission_type; ?>"><?php echo $commission_pretty_string; ?></label>
-      					</span>
-      					<?php
-      				}
-      				?>
-      				</p>
-      				<p><?php _e( 'Select the type of commission(s) thresholds to record.', 'edd-commission-thresholds' ); ?></p>
-      			</td>
-      		</tr>
-        <?php
+          				foreach ( $commission_types as $commission_type => $commission_pretty_string ) {
+          					?>
+          					<span class="edd-commission-type-wrapper" id="edd_commission_threshold_type_<?php echo $commission_type; ?>_wrapper">
+          						<input id="edd_commission_threshold_type_<?php echo $commission_type; ?>" type="radio" name="edd_commission_threshold_settings[type]" value="<?php echo $commission_type; ?>" <?php checked( $type, $commission_type, true ); ?>/>
+          						<label for="edd_commission_threshold_type_<?php echo $commission_type; ?>"><?php echo $commission_pretty_string; ?></label>
+          					</span>
+          					<?php
+          				}
+          				?>
+          				</p>
+          				<p><?php _e( 'Select the type of commission(s) thresholds to record.', 'edd-commission-thresholds' ); ?></p>
+          			</td>
+          		</tr>
+            <?php
         }
 
 
@@ -291,14 +286,14 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
          * @return      void
          */
         public function add_commissions_meta_box_threshold_table_header( $post_id ) {
-          ?>
-          <th class="eddc-commission-rate-rate">
+            ?>
+            <th class="eddc-commission-rate-rate">
             <?php _e( 'Threshold', 'edd-commission-thresholds' ); ?>
             <span alt="f223" class="edd-help-tip dashicons dashicons-editor-help" title="<strong> <?php _e( 'Threshold', 'edd-commission-thresholds' ); ?></strong>:&nbsp;
-              <?php _e( 'Enter the earnings or sales threshold amount for each commission recipient. If no rate is entered, the default rate for the user will be used. If no user rate is set, the global default rate will be used. Currency symbols are not required.', 'edd-commission-thresholds' ); ?>">
+                <?php _e( 'Enter the earnings or sales threshold amount for each commission recipient. If no rate is entered, the default rate for the user will be used. If no user rate is set, the global default rate will be used. Currency symbols are not required.', 'edd-commission-thresholds' ); ?>">
             </span>
-          </th>
-          <?php
+            </th>
+            <?php
         }
 
 
@@ -312,11 +307,11 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
          * @return      void
          */
         public function add_commissions_meta_box_rates_threshold_fields( $post_id, $key, $value ) {
-          ?>
-  				<td>
-  					<input type="text" class="edd-commissions-rate-field" name="edd_commission_threshold_settings[thresholds][<?php echo $key; ?>][threshold]" id="edd_commission_threshold_<?php echo $key; ?>" value="<?php echo $value['threshold']; ?>" placeholder="<?php _e( 'Threshold for this user', 'edd-commission-thresholds' ); ?>"/>
-  				</td>
-  				<?php
+            ?>
+    		<td>
+    			<input type="text" class="edd-commissions-rate-field" name="edd_commission_threshold_settings[thresholds][<?php echo $key; ?>][threshold]" id="edd_commission_threshold_<?php echo $key; ?>" value="<?php echo $value['threshold']; ?>" placeholder="<?php _e( 'Threshold for this user', 'edd-commission-thresholds' ); ?>"/>
+    		</td>
+    		<?php
         }
 
 
@@ -329,11 +324,11 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
          * @return      void
          */
         public function add_commissions_meta_box_empty_rates_threshold_field( $post_id ) {
-          ?>
-          <td>
-            <input type="text" name="edd_commission_threshold_settings[thresholds][1][threshold]" id="edd_commission_threshold_1" placeholder=" <?php _e( 'Threshold for this user', 'edd-commission-thresholds' ); ?>"/>
-          </td>
-          <?php
+            ?>
+            <td>
+                <input type="text" name="edd_commission_threshold_settings[thresholds][1][threshold]" id="edd_commission_threshold_1" placeholder=" <?php _e( 'Threshold for this user', 'edd-commission-thresholds' ); ?>"/>
+            </td>
+            <?php
         }
 
 
@@ -350,7 +345,7 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
 
         	// verify nonce
         	if ( ! isset( $_POST['edd_download_commission_meta_box_thresholds_nonce'] ) || ! wp_verify_nonce( $_POST['edd_download_commission_meta_box_thresholds_nonce'], basename( __FILE__ ) ) ) {
-        		return $post_id;
+        	       return $post_id;
         	}
 
         	// Check for auto save / bulk edit
@@ -375,15 +370,15 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
         			$users       = array();
         			$thresholds  = array();
 
-              // Get the threshold values
+                    // Get the threshold values
         			foreach( $_POST['edd_commission_threshold_settings']['thresholds'] as $rate ) {
         				$thresholds[] = $rate['threshold'];
         			}
 
-              // Get the user ids
-              foreach( $_POST['edd_commission_settings']['rates'] as $rate ) {
-                $users[]   = $rate['user_id'];
-              }
+                      // Get the user ids
+                    foreach( $_POST['edd_commission_settings']['rates'] as $rate ) {
+                        $users[]   = $rate['user_id'];
+                    }
 
         			$new['user_id'] = implode( ',', $users );
         			$new['threshold']  = implode( ',', $thresholds );
@@ -442,8 +437,8 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
          * @return      void
          */
         public function add_user_profile_fields( $user ) {
-          ?>
-      		<?php if ( current_user_can( 'manage_shop_settings' ) ) : ?>
+            ?>
+            	<?php if ( current_user_can( 'manage_shop_settings' ) ) : ?>
             <tr>
               <th><label><?php _e('User\'s Threshold Rate', 'edd-commission-thresholds'); ?></label></th>
               <td>
@@ -451,8 +446,8 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
                 <span class="description"><?php _e('Enter a global commission threshold rate for this user. If a rate is not specified for a product, this rate will be used.', 'edd-commission-thresholds'); ?></span>
               </td>
             </tr>
-          <?php endif; ?>
-          <?php
+            <?php endif; ?>
+            <?php
         }
 
 
@@ -465,19 +460,17 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
          * @return      void
          */
         public function save_user_profile_fields( $user_id ) {
-          if ( ! current_user_can( 'edit_user', $user_id ) ) {
-        		return false;
-        	}
+            if ( ! current_user_can( 'edit_user', $user_id ) ) {
+            	return false;
+            }
 
-        	if ( current_user_can( 'manage_shop_settings' ) ) {
-
-        		if ( ! empty( $_POST['edd_commission_thresholds_user_rate'] ) ) {
-        			update_user_meta( $user_id, 'edd_commission_thresholds_user_rate', sanitize_text_field( $_POST['edd_commission_thresholds_user_rate'] ) );
-        		} else {
-        			delete_user_meta( $user_id, 'edd_commission_thresholds_user_rate' );
-        		}
-
-        	}
+            if ( current_user_can( 'manage_shop_settings' ) ) {
+            	if ( ! empty( $_POST['edd_commission_thresholds_user_rate'] ) ) {
+            		update_user_meta( $user_id, 'edd_commission_thresholds_user_rate', sanitize_text_field( $_POST['edd_commission_thresholds_user_rate'] ) );
+            	} else {
+            		delete_user_meta( $user_id, 'edd_commission_thresholds_user_rate' );
+            	}
+            }
         }
 
 
@@ -490,9 +483,9 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
          * @return      string The threshold type of the commission
          */
         public function get_commission_threshold_type( $download_id = 0 ) {
-        	$settings = get_post_meta( $download_id, '_edd_commission_threshold_settings', true );
-        	$type     = isset( $settings['type'] ) ? $settings['type'] : 'earnings';
-        	return apply_filters( 'edd_commission_thresholds_get_threshold_type', $type, $download_id );
+            $settings = get_post_meta( $download_id, '_edd_commission_threshold_settings', true );
+            $type     = isset( $settings['type'] ) ? $settings['type'] : 'earnings';
+            return apply_filters( 'edd_commission_thresholds_threshold_type', $type, $download_id );
         }
 
 
@@ -547,7 +540,7 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
         		$rate = 0;
         	}
 
-        	return apply_filters( 'edd_commission_thresholds_get_recipient_threshold_rate', (float) $rate, $download_id, $user_id );
+        	return apply_filters( 'edd_commission_thresholds_recipient_threshold_rate', (float) $rate, $download_id, $user_id );
         }
 
 
@@ -568,7 +561,7 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
         	}
 
         	$recipients = array_map( 'intval', explode( ',', $settings['user_id'] ) );
-        	return (array) apply_filters( 'edd_commission_thresholds_get_recipients', $recipients, $download_id );
+        	return (array) apply_filters( 'edd_commission_thresholds_recipients', $recipients, $download_id );
         }
 
 
@@ -654,18 +647,18 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
  * @return      \EDD_Commission_Thresholds The one true EDD_Commission_Thresholds
  */
 function EDD_Commission_Thresholds_load() {
-
     if ( ! class_exists( 'Easy_Digital_Downloads' ) || ! class_exists( 'EDDC' ) ) {
-      if ( ! class_exists( 'EDD_Extension_Activation' ) || ! class_exists( 'EDD_Commissions_Activation' ) ) {
+        if ( ! class_exists( 'EDD_Extension_Activation' ) || ! class_exists( 'EDD_Commissions_Activation' ) ) {
           require_once 'includes/class-activation.php';
-      }
-    // Easy Digital Downloads activation
+        }
+
+        // Easy Digital Downloads activation
 		if ( ! class_exists( 'Easy_Digital_Downloads' ) ) {
 			$edd_activation = new EDD_Extension_Activation( plugin_dir_path( __FILE__ ), basename( __FILE__ ) );
 			$edd_activation = $edd_activation->run();
 		}
 
-    // Easy Digital Downloads - Commissions activation
+        // Commissions activation
 		if ( ! class_exists( 'EDDC' ) ) {
 			$edd_commissions_activation = new EDD_Commissions_Activation( plugin_dir_path( __FILE__ ), basename( __FILE__ ) );
 			$edd_commissions_activation = $edd_commissions_activation->run();
