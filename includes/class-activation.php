@@ -8,7 +8,7 @@
 
 
 // Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 
 /**
@@ -34,29 +34,28 @@ class EDD_Extension_Activation {
         $plugins = get_plugins();
 
         // Set plugin directory
-        $plugin_path = array_filter( explode( '/', $plugin_path ) );
+        $plugin_path       = array_filter( explode( '/', $plugin_path ) );
         $this->plugin_path = end( $plugin_path );
 
         // Set plugin file
         $this->plugin_file = $plugin_file;
 
         // Set plugin name
-        if( isset( $plugins[$this->plugin_path . '/' . $this->plugin_file]['Name'] ) ) {
+        if ( isset( $plugins[$this->plugin_path . '/' . $this->plugin_file]['Name'] ) ) {
             $this->plugin_name = str_replace( 'Easy Digital Downloads - ', '', $plugins[$this->plugin_path . '/' . $this->plugin_file]['Name'] );
         } else {
             $this->plugin_name = __( 'This plugin', 'edd' );
         }
 
         // Is EDD installed?
-        foreach( $plugins as $plugin_path => $plugin ) {
-            if( $plugin['Name'] == 'Easy Digital Downloads' ) {
-                $this->has_edd = true;
+        foreach ( $plugins as $plugin_path => $plugin ) {
+            if ( $plugin['Name'] == 'Easy Digital Downloads' ) {
+                $this->has_edd  = true;
                 $this->edd_base = $plugin_path;
                 break;
             }
         }
     }
-
 
     /**
      * Process plugin deactivation
@@ -70,7 +69,6 @@ class EDD_Extension_Activation {
         add_action( 'admin_notices', array( $this, 'missing_edd_notice' ) );
     }
 
-
     /**
      * Display notice if EDD isn't installed
      *
@@ -79,7 +77,7 @@ class EDD_Extension_Activation {
      * @return      string The notice to display
      */
     public function missing_edd_notice() {
-        if( $this->has_edd ) {
+        if ( $this->has_edd ) {
             $url  = esc_url( wp_nonce_url( admin_url( 'plugins.php?action=activate&plugin=' . $this->edd_base ), 'activate-plugin_' . $this->edd_base ) );
             $link = '<a href="' . $url . '">' . __( 'activate it', 'edd-commission-thresholds' ) . '</a>';
         } else {
@@ -89,6 +87,7 @@ class EDD_Extension_Activation {
 
         echo '<div class="error"><p>' . $this->plugin_name . sprintf( __( ' requires Easy Digital Downloads! Please %s to continue!', 'edd-commission-thresholds' ), $link ) . '</p></div>';
     }
+
 }
 
 
@@ -109,9 +108,9 @@ class EDD_Commissions_Activation {
     public function __construct( $plugin_path, $plugin_file ) {
         // We need plugin.php!
         require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-        $plugins = get_plugins();
+        $plugins           = get_plugins();
         // Set plugin directory
-        $plugin_path = array_filter( explode( '/', $plugin_path ) );
+        $plugin_path       = array_filter( explode( '/', $plugin_path ) );
         $this->plugin_path = end( $plugin_path );
         // Set plugin file
         $this->plugin_file = $plugin_file;
@@ -130,7 +129,6 @@ class EDD_Commissions_Activation {
         }
     }
 
-
     /**
      * Process plugin deactivation
      *
@@ -142,7 +140,6 @@ class EDD_Commissions_Activation {
         // Display notice
         add_action( 'admin_notices', array( $this, 'missing_commissions_notice' ) );
     }
-
 
     /**
      * Display notice if EDD isn't installed
@@ -158,4 +155,5 @@ class EDD_Commissions_Activation {
             echo '<div class="error"><p>' . $this->plugin_name . sprintf( __( ' requires %sEDD Commissions%s. Please install it to continue.', 'edd-commission-thresholds' ), '<a href="https://easydigitaldownloads.com/downloads/commissions/" title="EDD Commissions" target="_blank">', '</a>' ) . '</p></div>';
         }
     }
+
 }
