@@ -7,18 +7,19 @@ Commission Thresholds for Easy Digital Downloads Commissions allows you to easil
 Let’s look at some real-world examples of how Commission Thresholds could potentially be utilised in different scenarios:
 
 * You funded the development of a new product and you want to make back the initial development costs before any commissions are awarded to the vendor.
-* One downloadable product has multiple vendors receiving commissions and you want to set their commission thresholds independently.
+* One product has multiple vendors receiving commissions and you want to set their commission thresholds independently.
 * Each time a vendor uploads a new product, they must reach a baseline earnings threshold to cover marketplace curation and submissions costs before commissions are awarded.
 
 ## Features
 
 * Disable commissions until a specific sales or earnings threshold has been met
+* Recoup your product development investments before vendors are awarded commissions
 * Set commissions thresholds independently on a per download, user, or global basis
 * Set different thresholds for vendors receiving commissions on the same product
 * Set a fallback, or default global threshold that applies to all products by default
-* Recoup your product development investments before vendors are awarded commissions
+* Records a note within the payment record when a threshold has not been met
 * Seamless integration with Easy Digital Downloads and Commissions plugins
-* Translation-ready and contains a POT file to get you started!
+* Translation-ready and contains a POT file to get you started translating into your own language
 * Have a specific use-case? Commission Thresholds includes plenty of developer-ready filters and action hooks to make it possible!
 * Developed using the best practices, with security, extensibility, and readability in mind
 
