@@ -1,4 +1,4 @@
-## [Easy Digital Downloads - Commission Taxonomy Rates](https://sellcomet.com/downloads/commission-thresholds)
+## [Easy Digital Downloads - Commission Thresholds](https://sellcomet.com/downloads/commission-thresholds)
 
 Commission Thresholds for Easy Digital Downloads Commissions allows you to easily set up sales or earnings thresholds that must be met before any commissions are awarded to your vendors. Manage commission thresholds on a per download, user, or global basis for streamlined, granular control over your commissions.
 
