@@ -120,7 +120,7 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
             add_filter( 'eddc_should_record_recipient_commissions', array( $this, 'check_commission_threshold' ), 10, 4 );
 
             // Add a payment note if the threshold has not been achieved
-            add_action( 'edd_commission_thresholds_check_threshold_after', array( $this, 'maybe_add_payment_note' ), 10, 6 );
+            add_action( 'edd_commission_thresholds_check_threshold_after', array( $this, 'maybe_add_payment_note' ), 10, 7 );
         }
 
 
@@ -163,17 +163,17 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
             $type = $this->get_commission_threshold_type( $download_id );
 
             // Get commission recipient threshold rate
-            $threshold = $this->get_recipient_threshold_rate( $download_id, (int) $recipient );
+            $threshold_rate = $this->get_recipient_threshold_rate( $download_id, (int) $recipient );
 
             if ( 'earnings' === $type ) {
-                $record_commission = ( $earnings < $threshold ) ? false : true;
+                $record_commission = ( $earnings < $threshold_rate ) ? false : true;
             } else {
-                $record_commission = ( $sales < $threshold ) ? false : true;
+                $record_commission = ( $sales < $threshold_rate ) ? false : true;
             }
 
-            do_action( 'edd_commission_thresholds_check_threshold_after', $record_commission, $recipient, $download_id, $payment_id, $payment, $type );
+            do_action( 'edd_commission_thresholds_check_threshold_after', $record_commission, $recipient, $download_id, $payment_id, $payment, $type, $threshold_rate );
 
-            return apply_filters( 'edd_commission_thresholds_check_threshold', $record_commission, $recipient, $download_id, $payment_id, $payment, $type );
+            return apply_filters( 'edd_commission_thresholds_check_threshold', $record_commission, $recipient, $download_id, $payment_id, $payment, $type, $threshold_rate );
         }
 
 
@@ -190,7 +190,7 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
          * @param       string $type The commission threshold type (sales or earnings)
          * @return      void
          */
-        public function maybe_add_payment_note( $record_commission, $recipient, $download_id, $payment_id, $payment, $type ) {
+        public function maybe_add_payment_note( $record_commission, $recipient, $download_id, $payment_id, $payment, $type, $threshold_rate ) {
             if ( false === $record_commission ) {
                 $download = new EDD_Download( $download_id );
                 $payment->add_note( sprintf( __( 'Commission for %s skipped because %s did not reach threshold.', 'edd-commission-thresholds' ), $download->get_name(), get_userdata( $recipient )->display_name ) );
@@ -512,13 +512,16 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
         	// Check for a threshold rate specified on a specific product
         	if ( ! empty( $download_id ) ) {
         		$settings   = get_post_meta( $download_id, '_edd_commission_threshold_settings', true );
-        		$rates      = isset( $settings['threshold'] ) ? array_map( 'trim', explode( ',', $settings['threshold'] ) ) : array();
-        		$recipients = array_map( 'trim', explode( ',', $settings['user_id'] ) );
-        		$rate_key   = array_search( $user_id, $recipients );
 
-        		if ( isset( $rates[ $rate_key ] ) ) {
-        			$rate = $rates[ $rate_key ];
-        		}
+                if ( ! empty( $settings ) && is_array( $settings ) ) {
+            		$rates      = isset( $settings['threshold'] ) ? array_map( 'trim', explode( ',', $settings['threshold'] ) ) : array();
+            		$recipients = array_map( 'trim', explode( ',', $settings['user_id'] ) );
+            		$rate_key   = array_search( $user_id, $recipients );
+
+            		if ( isset( $rates[ $rate_key ] ) ) {
+            			$rate = $rates[ $rate_key ];
+            		}
+                }
         	}
 
         	// Check for a user specific global threshold rate
@@ -627,7 +630,7 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
         		array(
         			'id'      => 'edd_commission_thresholds_default_rate',
         			'name'    => __( 'Default threshold', 'edd-commission-thresholds' ),
-        			'desc'    => __( 'Enter the default threshold recipients are required to reach before commissions are recorded. This can be overwritten on a per-product or user basis.', 'edd-commission-thresholds' ),
+        			'desc'    => __( 'Enter the default threshold recipients are required to reach before commissions are recorded. This can be overwritten on a per-product basis.', 'edd-commission-thresholds' ),
         			'type'    => 'text',
         			'size'    => 'small',
         		),
