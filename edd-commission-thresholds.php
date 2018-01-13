@@ -648,6 +648,13 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
          */
         public function settings( $commission_settings ) {
           $new_settings = array(
+                array(
+                    'id'      => 'edd_commission_thresholds_header',
+                    'name'    => '<strong>' . __( 'Threshold Settings', 'edd-commission-thresholds' ) . '</strong>',
+                    'desc'    => '',
+                    'type'    => 'header',
+                    'size'    => 'regular',
+                ),
         		array(
         			'id'      => 'edd_commission_thresholds_default_rate',
         			'name'    => __( 'Default threshold', 'edd-commission-thresholds' ),
