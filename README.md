@@ -19,7 +19,7 @@ Let’s look at some real-world examples of how Commission Thresholds could pote
 * Set a fallback, or default global threshold that applies to all products by default
 * Records a note within the payment record when a threshold has not been met
 * Seamless integration with Easy Digital Downloads and Commissions plugins
-* Translation-ready and contains a POT file to get you started translating into your own language
+* Translation-ready and contains a POT file to help get you started translating into your own native language
 * Have a specific use-case? Commission Thresholds includes plenty of developer-ready filters and action hooks to make it possible!
 * Developed using the best practices, with security, extensibility, and readability in mind
 
