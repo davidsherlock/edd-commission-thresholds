@@ -83,6 +83,9 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
 
             if ( is_admin() ) {
 
+                // Make sure we are at the minimum version of EDD Commissions - which is 3.4.6.
+                add_action( 'admin_notices', array( $this, 'version_check_notice' ), 10 );
+
                 // Register extension settings
                 add_filter( 'eddc_settings', array( $this, 'settings' ), 1 );
 
@@ -121,6 +124,24 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
 
             // Add a payment note if the threshold has not been achieved
             add_action( 'edd_commission_thresholds_check_threshold_after', array( $this, 'maybe_add_payment_note' ), 10, 7 );
+        }
+
+
+        /**
+         * Make sure we are at the minimum version of EDD Commissions - which is 3.4.6.
+         *
+         * @since       1.0.0
+         * @access      public
+         * @return      void
+         */
+        public function version_check_notice(){
+            if ( defined( 'EDD_COMMISSIONS_VERSION' ) && version_compare( EDD_COMMISSIONS_VERSION, '3.4.6' ) == -1 ) {
+                ?>
+                <div class="notice notice-error">
+                <p><?php echo __( 'EDD Commission Fees: Your version of EDD Commissions must be updated to version 3.4.6 or later to use the Commission Fees extension in conjunction with Commissions.', 'edd-commission-fees' ); ?></p>
+                </div>
+                <?php
+            }
         }
 
 
