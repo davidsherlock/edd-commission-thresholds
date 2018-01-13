@@ -272,7 +272,7 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
               <tr <?php echo $display; ?> class="eddc_toggled_row" id="edd_commission_thresholds_type_wrapper">
           			<td class="edd_field_type_select">
           				<label for="edd_commission_threshold_settings[type]"><strong><?php _e( 'Threshold Type:', 'edd-commission-thresholds' ); ?></strong></label>
-          				<span alt="f223" class="edd-help-tip dashicons dashicons-editor-help" title="<strong><?php _e( 'Type', 'edd-commission-thresholds' ); ?></strong>: <?php _e( 'With commissions enabled, you will need to specify who to assign commission thresholds to. Commission thresholds can ether total earnings or sales count based.', 'edd-commission-thresholds' ); ?>"></span><br/>
+          				<span alt="f223" class="edd-help-tip dashicons dashicons-editor-help" title="<strong><?php _e( 'Type', 'edd-commission-thresholds' ); ?></strong>: <?php _e( 'With commissions enabled, you will need to specify who to assign commission thresholds to. Commission thresholds can be ether earnings or sales count based.', 'edd-commission-thresholds' ); ?>"></span><br/>
           				<p><?php
 
           				// Filter in the types of commission thresholds there could be.
