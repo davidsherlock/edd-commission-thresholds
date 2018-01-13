@@ -1,11 +1,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Easy Digital Downloads - Commission Thresholds\n"
-"POT-Creation-Date: 2018-01-07 19:23+0000\n"
-"PO-Revision-Date: 2018-01-07 19:23+0000\n"
+"POT-Creation-Date: 2018-01-13 10:17+0000\n"
+"PO-Revision-Date: 2018-01-13 10:18+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: en_GB\n"
+"Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -21,43 +21,50 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 
-#: edd-commission-thresholds.php:201
+#: edd-commission-thresholds.php:141
+msgid ""
+"EDD Commission Fees: Your version of EDD Commissions must be updated to "
+"version 3.4.6 or later to use the Commission Fees extension in conjunction "
+"with Commissions."
+msgstr ""
+
+#: edd-commission-thresholds.php:217
 #, php-format
 msgid "Commission for %s skipped because %s did not reach threshold."
 msgstr ""
 
-#: edd-commission-thresholds.php:258
+#: edd-commission-thresholds.php:274
 msgid "Threshold Type:"
 msgstr ""
 
-#: edd-commission-thresholds.php:259
+#: edd-commission-thresholds.php:275
 msgid "Type"
 msgstr ""
 
-#: edd-commission-thresholds.php:259
+#: edd-commission-thresholds.php:275
 msgid ""
 "With commissions enabled, you will need to specify who to assign commission "
 "thresholds to. Commission thresholds can ether total earnings or sales count "
 "based."
 msgstr ""
 
-#: edd-commission-thresholds.php:264
+#: edd-commission-thresholds.php:280
 msgid "Earnings"
 msgstr ""
 
-#: edd-commission-thresholds.php:265
+#: edd-commission-thresholds.php:281
 msgid "Sales"
 msgstr ""
 
-#: edd-commission-thresholds.php:278
+#: edd-commission-thresholds.php:294
 msgid "Select the type of commission(s) thresholds to record."
 msgstr ""
 
-#: edd-commission-thresholds.php:296 edd-commission-thresholds.php:297
+#: edd-commission-thresholds.php:312 edd-commission-thresholds.php:313
 msgid "Threshold"
 msgstr ""
 
-#: edd-commission-thresholds.php:298
+#: edd-commission-thresholds.php:314
 msgid ""
 "Enter the earnings or sales threshold amount for each commission recipient. "
 "If no rate is entered, the default rate for the user will be used. If no "
@@ -65,35 +72,32 @@ msgid ""
 "not required."
 msgstr ""
 
-#: edd-commission-thresholds.php:317 edd-commission-thresholds.php:334
+#: edd-commission-thresholds.php:333 edd-commission-thresholds.php:350
 msgid "Threshold for this user"
 msgstr ""
 
-#: edd-commission-thresholds.php:448
+#: edd-commission-thresholds.php:464
 msgid "User's Threshold Rate"
 msgstr ""
 
-#: edd-commission-thresholds.php:451
+#: edd-commission-thresholds.php:467
 msgid ""
 "Enter a global commission threshold rate for this user. If a rate is not "
 "specified for a product, this rate will be used."
 msgstr ""
 
-#: edd-commission-thresholds.php:636
-msgid "Default threshold rate"
+#: edd-commission-thresholds.php:653
+msgid "Threshold Settings"
 msgstr ""
 
-#: edd-commission-thresholds.php:637
+#: edd-commission-thresholds.php:660
+msgid "Default threshold"
+msgstr ""
+
+#: edd-commission-thresholds.php:661
 msgid ""
-"Enter the default threshold rate recipients are required to reach before "
+"Enter the default threshold recipients are required to reach before "
 "commissions are recorded. This can be overwritten on a per-product basis."
-msgstr ""
-
-#: edd-commission-thresholds.php:678
-#, php-format
-msgid ""
-"Commission Thresholds requires a minimum of %sEDD Commissions%s version "
-"3.4.5 to function. Please update your version of Commissions."
 msgstr ""
 
 #: includes/class-activation.php:47 includes/class-activation.php:122
@@ -128,12 +132,13 @@ msgid "Easy Digital Downloads - Commission Thresholds"
 msgstr ""
 
 #. Plugin URI of the plugin/theme
-msgid "https://sellcomet.com/downloads/"
+msgid "https://sellcomet.com/downloads/commission-thresholds"
 msgstr ""
 
 #. Description of the plugin/theme
 msgid ""
-"Disable commissions until a specific sale or earning threshold has been met."
+"Disable commissions until a specific sales or earnings threshold has been "
+"met."
 msgstr ""
 
 #. Author of the plugin/theme
