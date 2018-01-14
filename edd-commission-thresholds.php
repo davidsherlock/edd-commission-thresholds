@@ -283,9 +283,9 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
 
           				foreach ( $commission_types as $commission_type => $commission_pretty_string ) {
           					?>
-          					<span class="edd-commission-type-wrapper" id="edd_commission_threshold_type_<?php echo $commission_type; ?>_wrapper">
-          						<input id="edd_commission_threshold_type_<?php echo $commission_type; ?>" type="radio" name="edd_commission_threshold_settings[type]" value="<?php echo $commission_type; ?>" <?php checked( $type, $commission_type, true ); ?>/>
-          						<label for="edd_commission_threshold_type_<?php echo $commission_type; ?>"><?php echo $commission_pretty_string; ?></label>
+          					<span class="edd-commission-type-wrapper" id="edd_commission_threshold_type_<?php echo esc_attr( $commission_type ); ?>_wrapper">
+          						<input id="edd_commission_threshold_type_<?php echo esc_attr( $commission_type ); ?>" type="radio" name="edd_commission_threshold_settings[type]" value="<?php echo esc_attr( $commission_type ); ?>" <?php checked( $type, $commission_type, true ); ?>/>
+          						<label for="edd_commission_threshold_type_<?php echo esc_attr( $commission_type ); ?>"><?php echo esc_attr( $commission_pretty_string ); ?></label>
           					</span>
           					<?php
           				}
@@ -330,7 +330,7 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
         public function add_commissions_meta_box_rates_threshold_fields( $post_id, $key, $value ) {
             ?>
     		<td>
-    			<input type="text" class="edd-commissions-rate-field" name="edd_commission_threshold_settings[thresholds][<?php echo $key; ?>][threshold]" id="edd_commission_threshold_<?php echo $key; ?>" value="<?php echo $value['threshold']; ?>" placeholder="<?php _e( 'Threshold for this user', 'edd-commission-thresholds' ); ?>"/>
+    			<input type="text" class="edd-commissions-rate-field" name="edd_commission_threshold_settings[thresholds][<?php echo edd_sanitize_key( $key ); ?>][threshold]" id="edd_commission_threshold_<?php echo edd_sanitize_key( $key ); ?>" value="<?php echo esc_attr( $value['threshold'] ); ?>" placeholder="<?php _e( 'Threshold for this user', 'edd-commission-thresholds' ); ?>"/>
     		</td>
     		<?php
         }
@@ -393,12 +393,12 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
 
                     // Get the threshold values
         			foreach( $_POST['edd_commission_threshold_settings']['thresholds'] as $rate ) {
-        				$thresholds[] = $rate['threshold'];
+        				$thresholds[] = sanitize_text_field( $rate['threshold'] );
         			}
 
                       // Get the user ids
                     foreach( $_POST['edd_commission_settings']['rates'] as $rate ) {
-                        $users[]   = $rate['user_id'];
+                        $users[]   = sanitize_text_field( $rate['user_id'] );
                     }
 
         			$new['user_id'] = implode( ',', $users );
@@ -459,11 +459,11 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
          */
         public function add_user_profile_fields( $user ) {
             ?>
-            	<?php if ( current_user_can( 'manage_shop_settings' ) ) : ?>
+            <?php if ( current_user_can( 'manage_shop_settings' ) ) : ?>
             <tr>
               <th><label><?php _e('User\'s Threshold Rate', 'edd-commission-thresholds'); ?></label></th>
               <td>
-                <input type="text" name="edd_commission_thresholds_user_rate" id="edd_commission_thresholds_user_rate" class="small-text" value="<?php echo get_user_meta( $user->ID, 'edd_commission_thresholds_user_rate', true ); ?>" />
+                <input type="text" name="edd_commission_thresholds_user_rate" id="edd_commission_thresholds_user_rate" class="small-text" value="<?php echo esc_attr( get_user_meta( $user->ID, 'edd_commission_thresholds_user_rate', true ) ); ?>" />
                 <span class="description"><?php _e('Enter a global commission threshold rate for this user. If a rate is not specified for a product, this rate will be used.', 'edd-commission-thresholds'); ?></span>
               </td>
             </tr>
