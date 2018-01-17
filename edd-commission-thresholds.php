@@ -384,8 +384,16 @@ if( !class_exists( 'EDD_Commission_Thresholds' ) ) {
 
         	if ( isset( $_POST['edd_commisions_enabled'] ) ) {
 
-                $new  = isset( $_POST['edd_commission_threshold_settings'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['edd_commission_threshold_settings'] ) ) : false;
+                $new  = isset( $_POST['edd_commission_threshold_settings'] ) ? $_POST['edd_commission_threshold_settings'] : false;
         		$type = ! empty( $_POST['edd_commission_threshold_settings']['type'] ) ? $_POST['edd_commission_threshold_settings']['type'] : 'earnings';
+
+                // Recursively santize fields
+                if ( ! empty( $_POST['edd_commission_threshold_settings'] ) && is_array( $_POST['edd_commission_threshold_settings'] ) ) {
+                    $new = $_POST['edd_commission_threshold_settings'];
+                    array_walk_recursive(  $new, 'sanitize_text_field', wp_unslash( $_POST['edd_commission_threshold_settings'] ) );
+                } else {
+                    $new = false;
+                }
 
         		if ( ! empty( $_POST['edd_commission_threshold_settings']['thresholds'] ) && is_array( $_POST['edd_commission_threshold_settings']['thresholds'] ) ) {
         			$users       = array();
