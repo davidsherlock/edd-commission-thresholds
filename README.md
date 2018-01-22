@@ -1,4 +1,4 @@
-## [Easy Digital Downloads - Commission Thresholds](https://sellcomet.com/downloads/commission-thresholds)
+## [Easy Digital Downloads - Commission Thresholds](https://wordpress.org/plugins/edd-commission-thresholds/)
 
 Commission Thresholds for Easy Digital Downloads Commissions allows you to easily set up sales or earnings thresholds that must be met before any commissions are awarded to your vendors. Manage commission thresholds on a per download, user, or global basis for streamlined, granular control over your commissions.
 
@@ -38,7 +38,7 @@ This will download the latest developer copy of Commission Thresholds.
 If you find an issue, let us know [here](https://github.com/davidsherlock/edd-commission-thresholds/issues?state=open)!
 
 ## Support
-This is a developer's portal for Commission Thresholds and should _not_ be used for support. Please visit the [support page](https://sellcomet.com/contact/) if you need to submit a support request.
+This is a developer's portal for Commission Thresholds and should _not_ be used for support. Please visit the [support page](https://wordpress.org/support/plugin/edd-commission-thresholds) if you need to submit a support request.
 
 ## Contributions
 Anyone is welcome to contribute to Commission Thresholds.
